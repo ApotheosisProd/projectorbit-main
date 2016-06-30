@@ -8,8 +8,11 @@ public class MainCharacterControl : MonoBehaviour {
     //Direction variable
     public string direction;
 
-    //Direction vector
+    //Forward direction vector
     Vector3 forDirVector;
+
+    //Down direction vector
+    Vector3 downDirVector;
 
     //Movement speed
     public float moveSpeed;
@@ -26,11 +29,23 @@ public class MainCharacterControl : MonoBehaviour {
     //Deceleration length
     public float decelerationSlowing;
 
+    //Gravity variable
+    public float gravity;
+
+    //Initial gravity variable(editor)
+    float initialGravity;
+
+    //Movement direction variable
+    float movementDir;
+
+    float moving;
+
 	// Use this for initialization
 	void Start () {
         controller = GetComponent<CharacterController>();
         initialMoveSpeed = moveSpeed;
-	}
+        initialGravity = gravity;
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -39,21 +54,25 @@ public class MainCharacterControl : MonoBehaviour {
         if (direction == "down")
         {
             forDirVector = transform.right;
+            downDirVector = -transform.up;
         }
 
         if (direction == "up")
         {
             forDirVector = transform.right;
+            downDirVector = transform.up;
         }
 
         if (direction == "left")
         {
             forDirVector = transform.up;
+            downDirVector = -transform.right;
         }
 
         if (direction == "right")
         {
             forDirVector = transform.up;
+            downDirVector = transform.right;
         }
         //End of direcion vectors
         #endregion
@@ -72,10 +91,12 @@ public class MainCharacterControl : MonoBehaviour {
             if (Input.GetButton("Right") == true)
             {
                 moveSpeed = moveSpeed * acceleration;
+                movementDir = 1;
             }
             if (Input.GetButton("Left") == true)
             {
                 moveSpeed = moveSpeed * acceleration;
+                movementDir = -1;
             }
         }
 
@@ -85,10 +106,12 @@ public class MainCharacterControl : MonoBehaviour {
             if (Input.GetButton("Up") == true)
             {
                 moveSpeed = moveSpeed * acceleration;
+                movementDir = 1;
             }
             if (Input.GetButton("Down") == true)
             {
                 moveSpeed = moveSpeed * acceleration;
+                movementDir = -1;
             }
         }
 
@@ -111,7 +134,26 @@ public class MainCharacterControl : MonoBehaviour {
         }
 
         //Move character
+        controller.Move( (((forDirVector * (moveSpeed / 50)) * movementDir)*moving) + (downDirVector*gravity)/3);
+
         if (moveSpeed > initialMoveSpeed)
-            controller.Move((forDirVector * (moveSpeed / 50)) * right);
+        {
+            moving = 1;
+        }
+        else
+        {
+            moving = 0;
+        }
+
+        if (controller.isGrounded == true)
+        {
+            gravity = initialGravity;
+        }
+        else
+        {
+            gravity = gravity * 1.1f;
+            if (gravity > 30)
+                gravity = 30;
+        }
     }
 }
