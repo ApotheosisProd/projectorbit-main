@@ -2,6 +2,12 @@
 using System.Collections;
 
 public class MainCharacterControl : MonoBehaviour {
+    //Animator component
+    Animator animator;
+
+    //Sprite component
+    SpriteRenderer sprite;
+
     //Character controller component
     CharacterController controller;
 
@@ -65,8 +71,10 @@ public class MainCharacterControl : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         controller = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
         initialMoveSpeed = moveSpeed;
         initialGravity = gravity;
+        sprite = GetComponent<SpriteRenderer>();
     }
 	
     void Update()
@@ -119,14 +127,14 @@ public class MainCharacterControl : MonoBehaviour {
 
         if (direction == "left")
         {
-            forDirVector = transform.up;
+            forDirVector = -transform.right;
             downDirVector = -transform.up;
             rotation = -90;
         }
 
         if (direction == "right")
         {
-            forDirVector = transform.up;
+            forDirVector = transform.right;
             downDirVector = -transform.up;
             rotation = 90;
         }
@@ -155,11 +163,21 @@ public class MainCharacterControl : MonoBehaviour {
             {
                 moveSpeed = moveSpeed * acceleration;
                 movementDir = 1;
+                if (direction == "down")
+                    sprite.flipX = false;
+                if (direction == "up")
+                    sprite.flipX = true;
+                animator.SetBool("Run", true);
             }
             if (Input.GetButton("Left") == true)
             {
                 moveSpeed = moveSpeed * acceleration;
                 movementDir = -1;
+                if (direction == "down")
+                    sprite.flipX = true;
+                if (direction == "up")
+                    sprite.flipX = false;
+                animator.SetBool("Run", true);
             }
         }
 
@@ -170,11 +188,21 @@ public class MainCharacterControl : MonoBehaviour {
             {
                 moveSpeed = moveSpeed * acceleration;
                 movementDir = 1;
+                if (direction == "left")
+                    sprite.flipX = true;
+                if (direction == "right")
+                    sprite.flipX = false;
+                animator.SetBool("Run", true);
             }
             if (Input.GetButton("Down") == true)
             {
                 moveSpeed = moveSpeed * acceleration;
                 movementDir = -1;
+                if (direction == "left")
+                    sprite.flipX = false;
+                if (direction == "right")
+                    sprite.flipX = true;
+                animator.SetBool("Run", true);
             }
         }
 
@@ -184,6 +212,7 @@ public class MainCharacterControl : MonoBehaviour {
             if (Input.GetButton("Left") == false && Input.GetButton("Right") == false && moveSpeed > initialMoveSpeed)
             {
                 moveSpeed -= moveSpeed / decelerationSlowing;
+                animator.SetBool("Run", false);
             }
         }
 
@@ -193,6 +222,7 @@ public class MainCharacterControl : MonoBehaviour {
             if (Input.GetButton("Up") == false && Input.GetButton("Down") == false && moveSpeed > initialMoveSpeed)
             {
                 moveSpeed -= moveSpeed / decelerationSlowing;
+                animator.SetBool("Run", false);
             }
         }
         #endregion
@@ -249,13 +279,17 @@ public class MainCharacterControl : MonoBehaviour {
 
         //Start the jump timer
         if (jump == true)
+        {
             jumpTimer += 1;
+            animator.SetBool("Jump", true);
+        }
 
         //Reset the jump timer
         if (jumpTimer > 11)
         {
             jumpTimer = 0;
             jump = false;
+            animator.SetBool("Jump", false);
         }
         #endregion
 
