@@ -68,6 +68,9 @@ public class MainCharacterControl : MonoBehaviour {
     //Jump height
     public float jumpHeight;
 
+    //Whether or not character can shift gravity
+    bool canShift = true;
+
 	// Use this for initialization
 	void Start () {
         controller = GetComponent<CharacterController>();
@@ -92,36 +95,44 @@ public class MainCharacterControl : MonoBehaviour {
             }
         }
 
-        if (Input.GetAxis("Flip Horizontal") >= 0.8 || Input.GetButton("Flip Right Button") == true)
-        {
-            direction = "right";
-        }
 
-        if (Input.GetAxis("Flip Horizontal") <= -0.8 || Input.GetButton("Flip Left Button") == true)
+        if (canShift == true)
         {
-            direction = "left";
-        }
+            if (Input.GetAxis("Flip Horizontal") >= 0.8 || Input.GetButton("Flip Right Button") == true)
+            {
+                direction = "right";
+                canShift = false;
+            }
 
-        if (Input.GetAxis("Flip Vertical") <= -0.8 || Input.GetButton("Flip Up Button") == true)
-        {
-            direction = "up";
-        }
+            if (Input.GetAxis("Flip Horizontal") <= -0.8 || Input.GetButton("Flip Left Button") == true)
+            {
+                direction = "left";
+                canShift = false;
+            }
 
-        if (Input.GetAxis("Flip Vertical") >= 0.8 || Input.GetButton("Flip Down Button") == true)
-        {
-            direction = "down";
+            if (Input.GetAxis("Flip Vertical") <= -0.8 || Input.GetButton("Flip Up Button") == true)
+            {
+                direction = "up";
+                canShift = false;
+            }
+
+            if (Input.GetAxis("Flip Vertical") >= 0.8 || Input.GetButton("Flip Down Button") == true)
+            {
+                direction = "down";
+                canShift = false;
+            }
         }
         #endregion
     }
 
 	// Update is called once per frame
 	void FixedUpdate () {
-
         #region Check if Grounded
         //Raycast down to see if character is grounded
-        if (Physics.Raycast(transform.position, downDirVector, 2f))
+        if (Physics.Raycast(transform.position, downDirVector, 3f))
         {
             ground = true;
+            canShift = true;
         }
         else
         {
@@ -161,7 +172,7 @@ public class MainCharacterControl : MonoBehaviour {
 
         //Smoothly rotate to new direction
         rotationEuler = Quaternion.Euler(0, 0, rotation);
-        transform.rotation = Quaternion.Slerp(transform.rotation, rotationEuler,0.05f);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotationEuler,0.1f);
         //End of direcion vectors
         #endregion
 
