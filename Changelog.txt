@@ -8,3 +8,5 @@ Version 0.0.3:
 Changed rigidbody to character controller
 Version 0.0.4:
 Character can move based on gravity
+Version 0.0.5:
+Jumping added and gravity changed to be by rotation not vector
