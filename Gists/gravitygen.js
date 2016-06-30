@@ -7,8 +7,9 @@ function Start () {
 //declare the force of each 'side' of gravity is
 //output a string to the player telling them to 'watch out, gravity is to the 'certain direction' this time'
 //rotate the sprite in order to match the direction of gravity
+
 }
 
 function Update () {
-/
+//based on the direction of gravity, update controls.js in order to match generation.
 }
