@@ -12,3 +12,5 @@ Version 0.0.5:
 Jumping added and gravity changed to be by rotation not vector
 Version 0.0.6:
 Character rotates smoothly when changing gravity. Camera following smoothened, Animation added
+Version 0.0.7:
+Character can change gravity and controller support has been added

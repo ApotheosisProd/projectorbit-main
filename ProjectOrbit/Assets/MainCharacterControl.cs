@@ -91,6 +91,26 @@ public class MainCharacterControl : MonoBehaviour {
                 jumpTimer += 1;
             }
         }
+
+        if (Input.GetAxis("Flip Horizontal") >= 0.8 || Input.GetButton("Flip Right Button") == true)
+        {
+            direction = "right";
+        }
+
+        if (Input.GetAxis("Flip Horizontal") <= -0.8 || Input.GetButton("Flip Left Button") == true)
+        {
+            direction = "left";
+        }
+
+        if (Input.GetAxis("Flip Vertical") <= -0.8 || Input.GetButton("Flip Up Button") == true)
+        {
+            direction = "up";
+        }
+
+        if (Input.GetAxis("Flip Vertical") >= 0.8 || Input.GetButton("Flip Down Button") == true)
+        {
+            direction = "down";
+        }
         #endregion
     }
 
@@ -120,7 +140,7 @@ public class MainCharacterControl : MonoBehaviour {
 
         if (direction == "up")
         {
-            forDirVector = transform.right;
+            forDirVector = -transform.right;
             downDirVector = -transform.up;
             rotation = 180;
         }
@@ -159,7 +179,7 @@ public class MainCharacterControl : MonoBehaviour {
         //Set speed after pressing keys
         if (direction == "down" || direction == "up")
         {
-            if (Input.GetButton("Right") == true)
+            if (Input.GetAxis("Horizontal") > 0.2 || Input.GetButton("Right") == true)
             {
                 moveSpeed = moveSpeed * acceleration;
                 movementDir = 1;
@@ -169,7 +189,7 @@ public class MainCharacterControl : MonoBehaviour {
                     sprite.flipX = true;
                 animator.SetBool("Run", true);
             }
-            if (Input.GetButton("Left") == true)
+            if (Input.GetAxis("Horizontal") < -0.2 || Input.GetButton("Left") == true)
             {
                 moveSpeed = moveSpeed * acceleration;
                 movementDir = -1;
@@ -184,7 +204,7 @@ public class MainCharacterControl : MonoBehaviour {
         //Set speed after pressing keys
         if (direction == "left" || direction == "right")
         {
-            if (Input.GetButton("Up") == true)
+            if (Input.GetAxis("Vertical") < -0.1 || Input.GetButton("Up") == true)
             {
                 moveSpeed = moveSpeed * acceleration;
                 movementDir = 1;
@@ -194,7 +214,7 @@ public class MainCharacterControl : MonoBehaviour {
                     sprite.flipX = false;
                 animator.SetBool("Run", true);
             }
-            if (Input.GetButton("Down") == true)
+            if (Input.GetAxis("Vertical") > 0.1 || Input.GetButton("Down") == true)
             {
                 moveSpeed = moveSpeed * acceleration;
                 movementDir = -1;
@@ -209,7 +229,7 @@ public class MainCharacterControl : MonoBehaviour {
         //Decelrate when not pressing keys
         if (direction == "down" || direction == "up")
         {
-            if (Input.GetButton("Left") == false && Input.GetButton("Right") == false && moveSpeed > initialMoveSpeed)
+            if (Input.GetAxis("Horizontal") < 0.1 && Input.GetAxis("Horizontal") > -0.1 &&  Input.GetButton("Right") == false && Input.GetButton("Left") == false && moveSpeed > initialMoveSpeed)
             {
                 moveSpeed -= moveSpeed / decelerationSlowing;
                 animator.SetBool("Run", false);
@@ -219,7 +239,7 @@ public class MainCharacterControl : MonoBehaviour {
         //Decelrate when not pressing keys
         if (direction == "left" || direction == "right")
         {
-            if (Input.GetButton("Up") == false && Input.GetButton("Down") == false && moveSpeed > initialMoveSpeed)
+            if (Input.GetAxis("Vertical") < 0.1 && Input.GetAxis("Vertical") > -0.1 && Input.GetButton("Up") == false && Input.GetButton("Down") == false && moveSpeed > initialMoveSpeed)
             {
                 moveSpeed -= moveSpeed / decelerationSlowing;
                 animator.SetBool("Run", false);
