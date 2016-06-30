@@ -6,3 +6,5 @@ Updated sprite to be transparent, (still needs to be un blurred)
 BUGS: Stage moves horizontally as soon as the polygon hitbox touches the floor hitbox.
 Version 0.0.3:
 Changed rigidbody to character controller
+Version 0.0.4:
+Character can move based on gravity
