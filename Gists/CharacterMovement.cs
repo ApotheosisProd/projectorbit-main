@@ -38,7 +38,29 @@ public class MainCharacterControl : MonoBehaviour {
     //Movement direction variable
     float movementDir;
 
+    //Moving float
     float moving;
+
+    //Jumping boolean
+    bool jump;
+
+    //Character rotation
+    float rotation;
+
+    //Grounded boolean
+    bool ground;
+
+    //Timer to allow jumping
+    float jumpTimer;
+
+    //Rotate Euler
+    Quaternion rotationEuler;
+
+    //Maximum Gravity
+    public float maxGravity;
+
+    //Jump height
+    public float jumpHeight;
 
 	// Use this for initialization
 	void Start () {
@@ -47,36 +69,75 @@ public class MainCharacterControl : MonoBehaviour {
         initialGravity = gravity;
     }
 	
+    void Update()
+    {
+        #region Jump Input
+        //Jump if grounded and pressing space
+        if (ground == true)
+        {
+            if (Input.GetButtonDown("Jump") == true)
+            {
+                jump = true;
+                gravity = -jumpHeight;
+                ground = false;
+                jumpTimer += 1;
+            }
+        }
+        #endregion
+    }
+
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
+
+        #region Check if Grounded
+        //Raycast down to see if character is grounded
+        if (Physics.Raycast(transform.position, downDirVector, 2f))
+        {
+            ground = true;
+        }
+        else
+        {
+            ground = false;
+        }
+        #endregion
+
         #region Direction Vectors
         //These set the direction vectors based on the direction variable
         if (direction == "down")
         {
             forDirVector = transform.right;
             downDirVector = -transform.up;
+            rotation = 0;
         }
 
         if (direction == "up")
         {
             forDirVector = transform.right;
-            downDirVector = transform.up;
+            downDirVector = -transform.up;
+            rotation = 180;
         }
 
         if (direction == "left")
         {
             forDirVector = transform.up;
-            downDirVector = -transform.right;
+            downDirVector = -transform.up;
+            rotation = -90;
         }
 
         if (direction == "right")
         {
             forDirVector = transform.up;
-            downDirVector = transform.right;
+            downDirVector = -transform.up;
+            rotation = 90;
         }
+
+        //Smoothly rotate to new direction
+        rotationEuler = Quaternion.Euler(0, 0, rotation);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotationEuler,0.05f);
         //End of direcion vectors
         #endregion
 
+        #region Speed Limits
         //Limit the lowest move speed
         if (moveSpeed < initialMoveSpeed)
             moveSpeed = initialMoveSpeed;
@@ -84,7 +145,9 @@ public class MainCharacterControl : MonoBehaviour {
         //Limit the max move speed
         if (moveSpeed > maxSpeed)
             moveSpeed = maxSpeed;
+        #endregion
 
+        #region Speed from Input
         //Set speed after pressing keys
         if (direction == "down" || direction == "up")
         {
@@ -132,10 +195,13 @@ public class MainCharacterControl : MonoBehaviour {
                 moveSpeed -= moveSpeed / decelerationSlowing;
             }
         }
+        #endregion
 
+        #region Move Character
         //Move character
-        controller.Move( (((forDirVector * (moveSpeed / 50)) * movementDir)*moving) + (downDirVector*gravity)/3);
+        controller.Move( (((forDirVector * (moveSpeed / 50)) * movementDir)*moving) + ((downDirVector*gravity)/3));
 
+        //Set whether or not to move
         if (moveSpeed > initialMoveSpeed)
         {
             moving = 1;
@@ -144,16 +210,54 @@ public class MainCharacterControl : MonoBehaviour {
         {
             moving = 0;
         }
+        #endregion
 
-        if (controller.isGrounded == true)
+        #region Gravity
+        if (ground == true && jumpTimer == 0)
         {
+            // Reset gravity when grounded
             gravity = initialGravity;
+            jump = false;
         }
         else
         {
-            gravity = gravity * 1.1f;
-            if (gravity > 30)
-                gravity = 30;
+            //Set gravity and scale exponentially if not jumping
+            if (jump == false)
+            {
+                gravity = gravity * 1.1f;
+                if (gravity > maxGravity)
+                    gravity = maxGravity;
+            }
         }
+        #endregion
+
+        #region Jump Physics
+
+        //Change gravity if jumping
+        if (jump == true){
+            gravity += 0.5f;
+            if (gravity > maxGravity)
+                gravity = maxGravity;
+        }
+
+        //Move down once gravity is 0
+        if (gravity < 0)
+        {
+            jump = true;
+            ground = false;
+        }
+
+        //Start the jump timer
+        if (jump == true)
+            jumpTimer += 1;
+
+        //Reset the jump timer
+        if (jumpTimer > 11)
+        {
+            jumpTimer = 0;
+            jump = false;
+        }
+        #endregion
+
     }
 }
