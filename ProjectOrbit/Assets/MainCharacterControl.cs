@@ -312,7 +312,6 @@ public class MainCharacterControl : MonoBehaviour {
         if (jump == true)
         {
             jumpTimer += 1;
-            animator.SetBool("Jump", true);
         }
 
         //Reset the jump timer
@@ -320,9 +319,16 @@ public class MainCharacterControl : MonoBehaviour {
         {
             jumpTimer = 0;
             jump = false;
-            animator.SetBool("Jump", false);
         }
         #endregion
 
+        if(ground == false)
+        {
+            animator.SetBool("Jump", true);
+        }
+        else
+        {
+            animator.SetBool("Jump", false);
+        }
     }
 }
