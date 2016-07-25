@@ -16,3 +16,5 @@ Version 0.0.7:
 Character can change gravity and controller support has been added
 Version 0.0.8:
 Gravity adjusted when turning 
+Version 0.0.9:
+Random level generation early functionality. Only works to the right
